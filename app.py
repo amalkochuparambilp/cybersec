@@ -7,7 +7,7 @@ import os
 
 # --- PAGE SETUP ---
 st.set_page_config(page_title="Akphaio - Cybersecurity AI Assistant", layout="centered")
-st.title("🛡️ AKP CYBERSEC - Cybersecurity & Ethical Hacking AI Assistant")
+st.title("🛡️ Akphaio - Cybersecurity & Ethical Hacking AI Assistant")
 st.caption("Empowering ethical hackers with AI ⚡")
 
 # --- LOAD LOTTIE ANIMATION ---
@@ -40,7 +40,7 @@ if "messages" not in st.session_state:
         {
             "role": "system",
             "content": (
-                "You are Amal, a professional cybersecurity and ethical hacking AI assistant. "
+                "You are Akphaio, a professional cybersecurity and ethical hacking AI assistant. "
                 "Provide expert advice on topics like penetration testing, network security, security tools, "
                 "bug bounty, and responsible disclosure. Avoid illegal or unethical guidance."
             )
@@ -49,13 +49,18 @@ if "messages" not in st.session_state:
 
 # --- CHAT PAGE ---
 if selected == "Chat":
-    user_input = st.chat_input("Ask Amal anything about cybersecurity or ethical hacking...")
+    user_input = st.chat_input("Ask Akphaio anything about cybersecurity or ethical hacking...")
 
     if user_input:
         st.session_state.messages.append({"role": "user", "content": user_input})
 
         with st.spinner("Akphaio is thinking..."):
-            response = model.generate_content(st.session_state.messages)
+            # Convert messages to expected format for generate_content
+            contents = [
+                {"text": msg["content"], "author": msg["role"]}
+                for msg in st.session_state.messages
+            ]
+            response = model.generate_content(contents)
             assistant_reply = response.text
             st.session_state.messages.append({"role": "assistant", "content": assistant_reply})
 
@@ -66,7 +71,7 @@ if selected == "Chat":
 # --- ABOUT PAGE ---
 elif selected == "About":
     st.markdown("""
-    ## 🔐 About AKP CYBERSEC
+    ## 🔐 About Akphaio
 
     **Akphaio** is your intelligent AI assistant, built to help cybersecurity professionals, ethical hackers,
     and learners explore secure practices and advanced tools including:
@@ -77,8 +82,8 @@ elif selected == "About":
     - 🐞 Bug Bounty & Responsible Disclosure
     - ⚠️ Secure Coding & Cyber Threat Awareness
 
-    **Important:** Amal K P promotes only ethical and legal cybersecurity practices.
+    **Important:** Akphaio promotes only ethical and legal cybersecurity practices.
 
     ---
-    👨‍💻 Built by Amal K P ( bca student @ JNIAS )
+    👨‍💻 Built by [Your Name or Organization]
     """)
