@@ -55,9 +55,13 @@ if selected == "Chat":
         st.session_state.messages.append({"role": "user", "content": user_input})
 
         with st.spinner("Akphaio is thinking..."):
-            # Convert messages to expected format for generate_content
+            # Add "type": "text" key for each message for Google Gen AI client
             contents = [
-                {"text": msg["content"], "author": msg["role"]}
+                {
+                    "type": "text",
+                    "text": msg["content"],
+                    "author": msg["role"]
+                }
                 for msg in st.session_state.messages
             ]
             response = model.generate_content(contents)
