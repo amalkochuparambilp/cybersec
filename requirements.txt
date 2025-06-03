@@ -1,4 +1,8 @@
 streamlit
+google-generativeai
+langchain_google_genai
+streamlit-option-menu
+streamlit-lottie
 rich==14.0.0
 markdown-it-py==3.0.0
 mdurl==0.1.2
