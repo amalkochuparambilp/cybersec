@@ -32,7 +32,7 @@ if not st.session_state.authenticated:
 
 # --- CONTINUE IF LOGGED IN ---
 genai.configure(api_key=st.session_state.api_key)
-model = genai.GenerativeModel("gemini-pro")
+model = genai.GenerativeModel("gemini-2.0-flash")
 
 # --- SIDEBAR MENU WITH LOGOUT ---
 with st.sidebar:
