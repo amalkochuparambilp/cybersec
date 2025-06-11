@@ -1,24 +1,40 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
-from streamlit_lottie import st_lottie
 import google.generativeai as genai
-import json
-import os
 
 # --- PAGE SETUP ---
 st.set_page_config(page_title="Akphaio - Cybersecurity AI Assistant", layout="centered")
 st.title("🛡️ Akphaio - Cybersecurity & Ethical Hacking AI Assistant")
 st.caption("Empowering ethical hackers with AI ⚡")
 
-# --- LOAD LOTTIE ANIMATION ---
-def load_lottie(filepath):
-    try:
-        with open(filepath, "r") as f:
-            return json.load(f)
-    except Exception:
-        return None
+# --- LOGIN SYSTEM WITH NICKNAME ---
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
 
-# --- SIDEBAR MENU ---
+if not st.session_state.authenticated:
+    st.subheader("🔐 Login to Access Akphaio")
+    user_name = st.text_input("Enter your nickname")
+    user_api_key = st.text_input("Enter your Gemini API Key", type="password")
+
+    if st.button("Login"):
+        try:
+            genai.configure(api_key=user_api_key)
+            test_model = genai.GenerativeModel("gemini-pro")
+            test_model.generate_content("Say hello")  # Validate key
+            st.session_state.api_key = user_api_key
+            st.session_state.authenticated = True
+            st.session_state.user_name = user_name or "Hacker"
+            st.success(f"Welcome, {st.session_state.user_name}! 🔐")
+            st.rerun()
+        except Exception:
+            st.error("Invalid API key. Please try again.")
+    st.stop()
+
+# --- CONTINUE IF LOGGED IN ---
+genai.configure(api_key=st.session_state.api_key)
+model = genai.GenerativeModel("gemini-pro")
+
+# --- SIDEBAR MENU WITH LOGOUT ---
 with st.sidebar:
     selected = option_menu(
         menu_title="Main Menu",
@@ -26,13 +42,14 @@ with st.sidebar:
         icons=["chat", "info-circle"],
         default_index=0
     )
-    lottie = load_lottie("assets/hacker.json")
-    if lottie:
-        st_lottie(lottie, height=180)
-
-# --- CONFIGURE GOOGLE GENERATIVE AI ---
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY") or "YOUR_API_KEY_HERE")
-model = genai.GenerativeModel("gemini-pro")
+    st.markdown("---")
+    st.write(f"👋 Hello, **{st.session_state.get('user_name', 'Hacker')}**")
+    if st.button("🔓 Logout"):
+        st.session_state.authenticated = False
+        st.session_state.api_key = ""
+        st.session_state.messages = []
+        st.session_state.user_name = ""
+        st.experimental_rerun()
 
 # --- SESSION STATE SETUP ---
 if "messages" not in st.session_state:
@@ -55,7 +72,6 @@ if selected == "Chat":
         st.session_state.messages.append({"role": "user", "content": user_input})
 
         with st.spinner("Akphaio is thinking..."):
-            # Add "type": "text" key for each message for Google Gen AI client
             contents = [
                 {
                     "type": "text",
@@ -80,11 +96,11 @@ elif selected == "About":
     **Akphaio** is your intelligent AI assistant, built to help cybersecurity professionals, ethical hackers,
     and learners explore secure practices and advanced tools including:
 
-    - 🛡️ Penetration Testing
-    - 🔍 Network Security & Reconnaissance
-    - 🧰 Tools like Nmap, Metasploit, Burp Suite, Wireshark
-    - 🐞 Bug Bounty & Responsible Disclosure
-    - ⚠️ Secure Coding & Cyber Threat Awareness
+    - 🛡️ Penetration Testing  
+    - 🔍 Network Security & Reconnaissance  
+    - 🧰 Tools like Nmap, Metasploit, Burp Suite, Wireshark  
+    - 🐞 Bug Bounty & Responsible Disclosure  
+    - ⚠️ Secure Coding & Cyber Threat Awareness  
 
     **Important:** Akphaio promotes only ethical and legal cybersecurity practices.
 
